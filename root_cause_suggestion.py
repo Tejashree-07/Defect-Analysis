@@ -1,4 +1,8 @@
-# full pipeline with orchestrator and RCA only (no CAPA)
+# ======================================================
+# AGENTIC AI SYSTEM FOR AUTOMATION OF DEFECT ANALYSIS 
+# ======================================================
+
+# full pipeline with orchestrator and RCA only 
 import os
 import numpy as np
 import pandas as pd
@@ -116,9 +120,9 @@ print("\n=== Join_Status Model Evaluation ===")
 print(classification_report(y_join_test, y_join_pred))
 print(confusion_matrix(y_join_test, y_join_pred))
 
-# -----------------------------
-# SHAP explainer
-# -----------------------------
+# ---------------------------------------------------
+# SHAP explainer for automating root cause analysis 
+# ---------------------------------------------------
 X_train_df = pd.DataFrame(X_train_scaled, columns=all_features_full)
 X_test_df = pd.DataFrame(X_test_scaled, columns=all_features_full)
 explainer = shap.Explainer(xgb_defect, X_train_df)
@@ -255,5 +259,6 @@ joblib.dump(xgb_join, "xgb_join_model.pkl")
 joblib.dump(preprocessor, "preprocessor.pkl")
 joblib.dump(explainer, "shap_explainer.pkl")
 joblib.dump(all_features_full, "all_features_full.pkl")
+
 
 print(" Trained models, preprocessor, and SHAP explainer saved successfully.")
