@@ -13,15 +13,14 @@ AGENTIC AI SYSTEM FOR AUTOMATION OF SEMICONDUCTOR DEFECT ANALYSIS
     3) Pinecone: Retrieves relevant memory and contextual information
     4) Python: Implements defect prediction and automated root cause analysis
 
- The core implementation resides in the root_cause_suggestion.py file. It leverages XGBoost models to predict wafer defects and joining issues, while SHAP values 
+ The core implementation resides in the agentic_AI_defect_analysis.py file. It leverages XGBoost models to predict wafer defects and joining issues, while SHAP values 
  provide interpretable insights into the most influential features contributing to potential defects. The orchestrator maps these top features to specific
  fabrication processes—lithography, deposition, and etching—generating actionable recommendations for process engineers.
 
  Model performance has been validated on test data, demonstrating strong predictive capability for defect and join failure detection, making the system directly 
  applicable in semiconductor manufacturing for proactive defect management and yield improvement.
 
- Currently, the project is still a work in progress. A key area of future development is extending the Agentic AI system to automate CAPA (Corrective and Preventive Action) 
- solutions, which would require integration with real-time process data and broader fab-wide datasets. Additionally, the system could be enhanced to cover more 
+ Currently, the project is still a work in progress. A key area of future development is extending the Agentic AI system to automate CAPA (Corrective and Preventive  Action) solutions, which would require integration with real-time process data and broader fab-wide datasets. Additionally, the system could be enhanced to cover more 
  fabrication processes beyond deposition, etching, and lithography, improve model explainability, and incorporate dynamic feedback loops to continuously optimize 
  defect prediction and process yield. 
  
