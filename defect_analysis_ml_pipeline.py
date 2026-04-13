@@ -1,5 +1,5 @@
 # ======================================================
-# AGENTIC AI SYSTEM FOR AUTOMATION OF DEFECT ANALYSIS 
+# ML PIPELINE FOR AUTOMATION OF DEFECT ANALYSIS 
 # ======================================================
 
 # full pipeline with orchestrator and RCA only 
