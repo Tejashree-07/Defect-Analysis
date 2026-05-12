@@ -1,3 +1,5 @@
+
+
 # ============================================================
 # SEMICONDUCTOR DEFECT AGENT + ANALYTICS CHARTS
 # ============================================================
@@ -233,7 +235,7 @@ def agent_planner(defect_prob, join_prob, top_features):
 
 
 # ============================================================
-# ORCHESTRATOR (Agentic Version - FIXED)
+# ORCHESTRATOR
 # ============================================================
 def orchestrator(X_input):
 
@@ -261,7 +263,7 @@ def orchestrator(X_input):
         plan = agent_planner(defect_probs[i], join_probs[i], top_features)
         similar_cases = []
 
-        # INITIAL RCA (non-hardcoded base)
+        # INITIAL RCA
         rca = {
             "rca_summary": f"Top contributing features: {', '.join(top_features)}",
             "root_causes": top_features,
@@ -556,20 +558,17 @@ def generate_charts(process_df, result_df):
 # RUN SYSTEM
 # ============================================================
 
-# Run orchestrator on test data
-result_df = orchestrator(X_test)
-
-# Save results to CSV
-result_df.to_csv(output_log, index=False)
-
-# Generate charts using both process_df and result_df
-#    - process_df: raw input features (for heatmaps)
-#    - result_df: predictions and RCA logs (for defect/join plots)
-generate_charts(process_df=df, result_df=result_df)
-
-# Save trained models and preprocessor
 joblib.dump(xgb_defect, "xgb_defect_model.pkl")
 joblib.dump(xgb_join, "xgb_join_model.pkl")
 joblib.dump(preprocessor, "preprocessor.pkl")
 
-print("SYSTEM EXECUTION COMPLETE")
+from digital_twin_simulator import DigitalTwinSimulator
+
+twin = DigitalTwinSimulator(csv_path="synthetic_explicit.csv")
+results = twin.stream(orchestrator, interval_seconds=0, max_wafers=650)
+
+final_df = pd.concat(results, ignore_index=True) if results else pd.DataFrame()
+final_df.to_excel("digital_twin_results.xlsx", index=False)
+
+print("Execution Completed")
+
