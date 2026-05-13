@@ -37,10 +37,16 @@ class DigitalTwinSimulator:
         self.mean       = numeric_data.mean().values
         self.cov_matrix = numeric_data.cov().values
 
+        # --------------------------------------------------
+        # LEARN Tool_Type frequencies
+        # --------------------------------------------------
         tool_counts      = df["Tool_Type"].value_counts(normalize=True)
         self.tool_types  = tool_counts.index.tolist()
         self.tool_probs  = tool_counts.values.tolist()
-        
+
+        # --------------------------------------------------
+        # SAFE OPERATING RANGES per sensor.
+        # --------------------------------------------------
         stds = numeric_data.std().values
         self.safe_min = self.mean - 2 * stds
         self.safe_max = self.mean + 2 * stds
@@ -56,10 +62,10 @@ class DigitalTwinSimulator:
         # DRIFT STATE
         # --------------------------------------------------
         self.drift_active      = False
-        self.drift_col_idx     = None   # which sensor is drifting
-        self.drift_per_wafer   = 0.0    # how much it shifts per wafer
-        self.drift_remaining   = 0      # wafers left in this episode
-        self.drift_accumulated = 0.0    # total shift so far
+        self.drift_col_idx     = None  
+        self.drift_per_wafer   = 0.0    
+        self.drift_remaining   = 0      
+        self.drift_accumulated = 0.0   
 
         # --------------------------------------------------
         # SIMULATION CLOCK
@@ -73,10 +79,11 @@ class DigitalTwinSimulator:
         print("  Simulator ready.\n")
 
 
-    # ==============================================================
+    # =============================================================
     # Generate a baseline (healthy) wafer
     # ==============================================================
     def _sample_baseline(self):
+
         values = np.random.multivariate_normal(self.mean, self.cov_matrix)
 
         wafer = {}
@@ -87,7 +94,6 @@ class DigitalTwinSimulator:
             self.tool_types, p=self.tool_probs
         )
         return wafer
-
 
     def _apply_drift(self, wafer):
 
@@ -170,12 +176,8 @@ class DigitalTwinSimulator:
 
         return wafer
 
-
-    # ==============================================================
-    # INTERNAL: Check if any sensor is outside safe range
-    # ==============================================================
     def _check_out_of_range(self, wafer):
-
+  
         warnings = []
         for i, col in enumerate(self.numeric_cols):
             val = wafer[col]
@@ -185,18 +187,14 @@ class DigitalTwinSimulator:
                     f"(safe: {self.safe_min[i]:.2f} - {self.safe_max[i]:.2f})"
                 )
         return warnings
-
-
-    # ==============================================================
-    # PUBLIC: Generate one wafer
-    # ==============================================================
+    
     def generate(self):
-
         self.wafer_count += 1
 
         print(f"\n{'-'*55}")
         print(f"  Wafer #{self.wafer_count:04d}  |  "
               f"Real time: {datetime.now().strftime('%H:%M:%S')}")
+
         wafer = self._sample_baseline()
         wafer = self._apply_drift(wafer)
         if random.random() < self.fault_probability:
@@ -206,9 +204,10 @@ class DigitalTwinSimulator:
             print(f"  WARNING: {len(warnings)} sensor(s) out of safe range:")
             for w in warnings:
                 print(f"    -> {w}")
+
         all_cols = self.numeric_cols + ["Tool_Type"]
         return pd.DataFrame([wafer])[all_cols]
-
+        
     def stream(self, orchestrator_fn, interval_seconds=3, max_wafers=None):
 
         print("\n" + "=" * 55)
@@ -227,7 +226,6 @@ class DigitalTwinSimulator:
 
         try:
             while True:
-
                 batch = []
                 for _ in range(10):
                     wafer_df = self.generate()
@@ -237,14 +235,19 @@ class DigitalTwinSimulator:
                 result = orchestrator_fn(batch_df)
 
                 if result is not None and not result.empty:
-                    risk_counts["high"] += 1
+                    high_count   = len(result)        
+                    normal_count = 10 - high_count    
+                    risk_counts["high"] += high_count
+                    risk_counts["low"]  += normal_count
                     all_results.append(result)
                     print(f"  HIGH RISK  | "
                           f"defect_prob: {result['defect_prob'].values[0]:.3f} | "
-                          f"High-risk total: {risk_counts['high']}")
+                          f"High-risk this batch: {high_count} | "
+                          f"Normal this batch: {normal_count} | "
+                          f"Total high-risk: {risk_counts['high']}")
                 else:
-                    risk_counts["low"] += 1
-                    print(f"  NORMAL     | Normal total: {risk_counts['low']}")
+                    risk_counts["low"] += 10
+                    print(f"  ALL NORMAL | Normal total: {risk_counts['low']}")
 
                 if max_wafers and self.wafer_count >= max_wafers:
                     print(f"\n  Reached {max_wafers} wafers. Stopping.")
@@ -270,17 +273,14 @@ class DigitalTwinSimulator:
 
         return all_results
 
-# ============================================================
-# QUICK STANDALONE TEST
-# ============================================================
+# ===================================
+# Standalone Test 
+# ====================================
 
 if __name__ == "__main__":
 
     def mock_orchestrator(X_input):
-        """
-        Fake orchestrator for testing.
-        Replace with your real orchestrator() when ready.
-        """
+
         print(f"  Orchestrator got: shape={X_input.shape} | "
               f"Temp={X_input['Chamber_Temperature'].values[0]:.1f}C | "
               f"RF={X_input['RF_Power'].values[0]:.1f} | "
@@ -294,4 +294,4 @@ if __name__ == "__main__":
     )
 
     print("\n=== Generating 8 demo wafers ===")
-    twin.stream(mock_orchestrator, interval_seconds=1, max_wafers=30)
+    twin.stream(mock_orchestrator, interval_seconds=1, max_wafers=8)
