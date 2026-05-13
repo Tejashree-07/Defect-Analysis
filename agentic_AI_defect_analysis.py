@@ -154,7 +154,7 @@ def call_llm_with_rag(def_prob, join_prob, features, similar_cases):
 # -----------------------------
 df = pd.read_csv(file_path)
 
-X = df.drop(columns=["Join_Status", "Defect"])
+X = df.drop(columns=["Join_Status", "Defect", "Year", "Month", "Date", "Hour", "Minute"])
 y_defect = df["Defect"].astype(int)
 y_join = pd.factorize(df["Join_Status"])[0]
 
@@ -571,4 +571,3 @@ final_df = pd.concat(results, ignore_index=True) if results else pd.DataFrame()
 final_df.to_excel("digital_twin_results.xlsx", index=False)
 
 print("Execution Completed")
-
