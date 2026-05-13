@@ -2,8 +2,8 @@ AGENTIC AI SYSTEM FOR AUTOMATION OF SEMICONDUCTOR DEFECT ANALYSIS
   
 The goal of this project is to develop an Agentic AI system that predicts semiconductor defects and automatically identifies their root causes, significantly reducing the time and effort required for manual defect analysis and process troubleshooting.
   
-Currently, the system focuses on the three key processes that most impact wafer yield - deposition, etching, and lithography, and can be extended to other semiconductor fabrication processes for comprehensive defect prediction and root cause analysis. The system uses a dataset from Kaggle that includes inline tool and process parameters, and ategorized yes/no kind of data 
-  
+Currently, the system focuses on the three key processes that most impact wafer yield - deposition, etching, and lithography, and can be extended to other semiconductor fabrication processes for comprehensive defect prediction and root cause analysis. The system is trained on an inline process dataset sourced from Kaggle, comprising real tool and process parameters alongside defect labels, reflecting the structured quality control data collected at each process station in a real manufacturing environment.
+
 The AI system follows a modular architecture designed for intelligent reasoning and workflow automation:
 
     1) LLM (OpenAI): Provides reasoning and planning capabilities
