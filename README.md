@@ -9,10 +9,9 @@ AGENTIC AI SYSTEM FOR AUTOMATION OF SEMICONDUCTOR DEFECT ANALYSIS
   The AI system follows a modular architecture designed for intelligent reasoning and workflow automation:
 
     1) LLM (OpenAI): Provides reasoning and planning capabilities
-    2) LangChain / LangGraph: Orchestrates the overall workflow
-    3) Pinecone: Retrieves relevant memory and contextual information
-    4) Python: Implements defect prediction and automated root cause analysis
-    5) Digital Twin Simulation: Generates realistic semiconductor manufacturing data streams for continuous system validation and testing
+    2) Pinecone: Retrieves relevant memory and contextual information
+    3) Python: Implements defect prediction and automated root cause analysis
+    4) Digital Twin Simulation: Generates realistic semiconductor manufacturing data streams for continuous system validation and testing
 
  The core implementation resides in the agentic_AI_defect_analysis.py file. It leverages XGBoost models to predict wafer defects and joining issues, while SHAP values 
  provide interpretable insights into the most influential features contributing to potential defects. The orchestrator maps these top features to specific
