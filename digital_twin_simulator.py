@@ -3,10 +3,6 @@
 # ============================================================
 
 """
-digital_twin_simulator.py
-=========================
-Digital Twin Simulator for Semiconductor Wafer Fabrication
-
 Simulates a four-stage wafer fabrication pipeline:
   Lithography → Etch → Deposition → Inspection
 
